@@ -7,6 +7,7 @@
 package GraphicsLib;
   
   import java.awt.Color;
+import java.awt.FontMetrics;
   import java.awt.Graphics;
   import java.util.Random;  
   
@@ -148,6 +149,19 @@ public class G{
         loc = new V(x,y); size = new V(dx, dy);
       }
       public VS(BBox b){loc = new V(b.h.lo, b.v.lo); size = new V(b.h.s, b.v.s);}
+      public void showButton(Graphics g, Color c, String text) {
+          g.setColor(c);
+          g.fillRect(loc.x, loc.y, size.x, size.y);
+          FontMetrics fm = g.getFontMetrics();     
+          int w = fm.stringWidth(text);     
+          int a = fm.getAscent();     // the height above the base line
+          int d = fm.getDescent();     // the height below the base line
+          g.setColor(Color.BLACK);
+          g.drawString(text, loc.x+(size.x-w)/2, a+loc.y+(size.y-(a+d))/2);          
+      }
+      public boolean hit(int x, int y) {
+          return (loc.x <= x) && (loc.y <= y) && (x <= (loc.x+size.x)) && (y <= (loc.y+size.y));
+      }
     }
   
     public static class LoHi{ 

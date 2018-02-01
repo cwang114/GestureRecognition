@@ -93,6 +93,15 @@ public class SandBox extends Window{
 public class Sandbox extends Window{
     public static ArrayList<Ink> inkList = new ArrayList<>();
     public static Norm.List normList = new Norm.List();
+    public static Norm lastNorm;
+    // two buttons
+    public static final int buttonWidth = 100;
+    public static final int buttonHeight = 50;
+    public static final int buttonMargin = 10;
+    public static VS noButton = new VS(buttonMargin, buttonMargin, buttonWidth, buttonHeight);
+    public static VS oopsButton = new VS(buttonMargin, 2*buttonMargin+buttonHeight, buttonWidth, buttonHeight);
+    public static boolean buttonClicked;
+    
     
 /**
      * @param args the command line arguments
@@ -108,30 +117,56 @@ public class Sandbox extends Window{
     }
     @Override
     protected void paintComponent(Graphics g){
+      // background
       g.setColor(Color.WHITE); g.fillRect(0, 0, 2000, 2000);
-      g.setColor(Color.RED);
-      g.drawRect(10, 10, 100, 100);
-      Ink.buffer.show(g);
+      
+//      g.setColor(Color.RED);
+//      g.drawRect(10, 10, 100, 100);
+     
+      
+      // draw buttons
+      noButton.showButton(g, Color.PINK, "No");
+      oopsButton.showButton(g, Color.LIGHT_GRAY, "Oops");
 
-// save all the ink traces.
-//      for(Ink ink : inkList) {
-//          ink.show(g);
-//      }
-      
-      Ink.buffer.box.show(g);
-      
+       // save all the ink traces.
+      for(Ink ink : inkList) {
+          ink.show(g);
+      }      
+      // Ink.buffer.box.show(g);      
       if(Ink.buffer.n > 0) {
           Norm norm = new Norm();
           VS vs = new VS(10, 10, 100, 100);
           norm.showAt(g, vs);
-      }
-      
-      normList.showList(g);
+          Ink.buffer.show(g);
+      }      
+      // normList.showList(g);
     }
   
     @Override
     public void mousePressed(MouseEvent e){
-      Ink.buffer.addFirst(e.getX(), e.getY());
+      int x = e.getX();
+      int y = e.getY();
+      if (noButton.hit(x, y)) {
+          // if no button is hit, replace the last norm in the list with the new norm
+          inkList.get(inkList.size()-1).norm = lastNorm;
+          normList.add(lastNorm);
+          lastNorm = null;
+          // System.out.println("hit no button");
+          buttonClicked = true;
+      } else if (oopsButton.hit(x, y)) {
+          // System.out.println("hit oops button");
+          buttonClicked = true;
+      } else {
+          // know this is the right choice: blend
+          if (lastNorm != null) {
+            Norm best = normList.bestMatch(lastNorm);
+            best.blend(lastNorm);
+          }         
+          
+          Ink.buffer.addFirst(e.getX(), e.getY());
+          buttonClicked = false;
+      }     
+    
     }
   
     @Override
@@ -141,19 +176,39 @@ public class Sandbox extends Window{
     }
   
     public void mouseReleased(MouseEvent e){
-      inkList.add(new Ink());
-      System.out.println("The number of points is: " + Ink.buffer.n);
-      if (inkList.size() > 1) {
-          // fetch the last two emelents out.
-          Ink ink1 = inkList.get(inkList.size() - 1);
-          Ink ink2 = inkList.get(inkList.size() - 2);
-          System.out.println("The distance is: " + (ink1.norm.distNorm(ink2.norm))/1000000);
-      } else {
-          System.out.println("The inklist is empty.");
-      }
+      // detect the button clicking
+      if (!buttonClicked) {
+        inkList.add(new Ink());
+        int last = inkList.size()-1;
+        Ink lastInk = inkList.get(last);
+        lastNorm = lastInk.norm;
+        // replace the ink with the best match
+        Norm best = normList.bestMatch(lastNorm);
+        if (best != null) {
+            lastInk.norm = best;
+        } else {
+            normList.add(lastNorm);
+        }      
+        Ink.buffer.n = 0;       
+        
+          
+        /**
+         * System.out.println("The number of points is: " + Ink.buffer.n);
+        if (inkList.size() > 1) {
+            // fetch the last two emelents out.
+            Ink ink1 = inkList.get(inkList.size() - 1);
+            Ink ink2 = inkList.get(inkList.size() - 2);
+            System.out.println("The distance is: " + (ink1.norm.distNorm(ink2.norm))/1000000);
+        } else {
+            System.out.println("The inklist is empty.");
+        }
+
+        Norm n = new Norm();
+        normList.addDiff(n);
+        **/
       
-      Norm n = new Norm();
-      normList.addDiff(n);
+      }   
+      PANEL.repaint();
       
     }
   }

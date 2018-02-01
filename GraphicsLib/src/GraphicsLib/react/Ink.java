@@ -70,8 +70,10 @@ public class Ink implements I.Show{
     
     public static class Norm extends PL{
       
+      public int nBlend = 1; // the number of norms averaged
       private static final int N = UC.normSize;
       public static V temp = new V(), prev = new V();
+      
       
       public Norm(){
         super(N, Ink.buffer, Ink.buffer.n);
@@ -87,6 +89,16 @@ public class Ink implements I.Show{
           V p = points[i];
           p.set((p.x - h.m)*UC.normCoord/s,(p.y - v.m)*UC.normCoord/s);
         }
+      }
+      // blend norm into this.
+      public void blend (Norm n) {
+          for(int i = 0; i < N; i++) {
+              // update a point with the averaged value of coordinates.
+              int newX = (points[i].x * nBlend + n.points[i].x)/(nBlend+1);
+              int newY = (points[i].y * nBlend + n.points[i].y)/(nBlend+1);
+              points[i].set(newX, newY);              
+          }
+          nBlend += 1;
       }
       
       public static class List extends ArrayList<Norm> {
@@ -108,8 +120,24 @@ public class Ink implements I.Show{
               VS vs = new VS(100, 10, dx, dx);
               for (Norm norm: this) {
                   norm.showAt(g, vs);
-                  vs.loc.x += (dx+5);
+                  g.drawString(""+norm.nBlend, vs.loc.x, vs.loc.y);
+                  vs.loc.x += (dx+5);            
               }
+          }
+          public Norm bestMatch(Norm norm) {
+              if (this.size() == 0) {
+                  return null;
+              } 
+              Norm result = get(0);
+              int bestSoFar = norm.distNorm(result);
+              for(Norm n : this) {
+                  int d = n.distNorm(norm);
+                  if (d < bestSoFar) {
+                      bestSoFar = d;
+                      result = n;
+                  }
+              }
+              return result;
           }
       }
       
