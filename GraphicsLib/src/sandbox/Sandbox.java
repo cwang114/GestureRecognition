@@ -14,6 +14,9 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import GraphicsLib.react.Ink.Buffer;
 import GraphicsLib.react.Ink.Norm;
+import GraphicsLib.react.Stroke;
+import GraphicsLib.react.Stroke.Shape;
+import GraphicsLib.react.Stroke.Shape.DB;
 
 /**
  *
@@ -102,6 +105,8 @@ public class Sandbox extends Window{
     public static VS oopsButton = new VS(buttonMargin, 2*buttonMargin+buttonHeight, buttonWidth, buttonHeight);
     public static boolean buttonClicked;
     
+    public static int numOfString = 100;
+    public static String[] testStrings = {"N-N", "S-S", "N-E", "N-E", "N-E"};
     
 /**
      * @param args the command line arguments
@@ -115,14 +120,19 @@ public class Sandbox extends Window{
     public Sandbox() {
       super("Sandbox", 1000, 800);
     }
+    
+    public void train(ArrayList<String> name) {
+        // user draws stroke and defines the shape and its name.
+        
+    }
+    
     @Override
     protected void paintComponent(Graphics g){
       // background
       g.setColor(Color.WHITE); g.fillRect(0, 0, 2000, 2000);
       
 //      g.setColor(Color.RED);
-//      g.drawRect(10, 10, 100, 100);
-     
+//      g.drawRect(10, 10, 100, 100);     
       
       // draw buttons
       noButton.showButton(g, Color.PINK, "No");
@@ -132,7 +142,7 @@ public class Sandbox extends Window{
       for(Ink ink : inkList) {
           ink.show(g);
       }      
-      // Ink.buffer.box.show(g);      
+      Ink.buffer.box.show(g);      
       if(Ink.buffer.n > 0) {
           Norm norm = new Norm();
           VS vs = new VS(10, 10, 100, 100);
@@ -140,6 +150,12 @@ public class Sandbox extends Window{
           Ink.buffer.show(g);
       }      
       // normList.showList(g);
+      
+      if (numOfString < testStrings.length) {
+          // give the msg to user
+          g.drawString("Please draw the shape: " + testStrings[numOfString], 100, 100);
+          
+      }
     }
   
     @Override
@@ -176,39 +192,52 @@ public class Sandbox extends Window{
     }
   
     public void mouseReleased(MouseEvent e){
-      // detect the button clicking
-      if (!buttonClicked) {
-        inkList.add(new Ink());
-        int last = inkList.size()-1;
-        Ink lastInk = inkList.get(last);
-        lastNorm = lastInk.norm;
-        // replace the ink with the best match
-        Norm best = normList.bestMatch(lastNorm);
-        if (best != null) {
-            lastInk.norm = best;
-        } else {
-            normList.add(lastNorm);
-        }      
-        Ink.buffer.n = 0;       
-        
+//      // detect the button clicking
+//      if (!buttonClicked) {
+//        inkList.add(new Ink());
+//        int last = inkList.size()-1;
+//        Ink lastInk = inkList.get(last);
+//        lastNorm = lastInk.norm;
+//        // replace the ink with the best match
+//        Norm best = normList.bestMatch(lastNorm);
+//        if (best != null) {
+//            lastInk.norm = best;
+//        } else {
+//            normList.add(lastNorm);
+//        }      
+//        Ink.buffer.n = 0;       
+//        
           
-        /**
-         * System.out.println("The number of points is: " + Ink.buffer.n);
-        if (inkList.size() > 1) {
-            // fetch the last two emelents out.
-            Ink ink1 = inkList.get(inkList.size() - 1);
-            Ink ink2 = inkList.get(inkList.size() - 2);
-            System.out.println("The distance is: " + (ink1.norm.distNorm(ink2.norm))/1000000);
+//        System.out.println("The number of points is: " + Ink.buffer.n);
+//        if (inkList.size() > 1) {
+//            // fetch the last two emelents out.
+//            Ink ink1 = inkList.get(inkList.size() - 1);
+//            Ink ink2 = inkList.get(inkList.size() - 2);
+//            System.out.println("The distance is: " + (ink1.norm.distNorm(ink2.norm))/1000000);
+//        } else {
+//            System.out.println("The inklist is empty.");
+//        }
+//
+//        Norm n = new Norm();
+//        normList.addDiff(n);
+//        
+        if (numOfString < testStrings.length) {
+            // knew what the shape is.
+            Shape s = new Shape(testStrings[numOfString]);
+            s.prototypes.add(new Norm());
+            numOfString++;
+         
         } else {
-            System.out.println("The inklist is empty.");
-        }
-
-        Norm n = new Norm();
-        normList.addDiff(n);
-        **/
-      
-      }   
-      PANEL.repaint();
+            // should be able to build stroke class
+            Stroke stroke = new Stroke();
+            System.out.println(stroke.shape.name + ": distance="+Stroke.lastStrokeDistance);
+            if (numOfString == testStrings.length) {
+                // save the database
+                // DB.saveDB();
+                numOfString ++;
+            }
+        }   
+        PANEL.repaint();
       
     }
   }

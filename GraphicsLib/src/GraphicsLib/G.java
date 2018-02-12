@@ -9,6 +9,7 @@ package GraphicsLib;
   import java.awt.Color;
 import java.awt.FontMetrics;
   import java.awt.Graphics;
+import java.io.Serializable;
   import java.util.Random;  
   
 /**
@@ -126,7 +127,7 @@ public class G{
     public static Color lineColor = Color.BLACK;
     
     public static Random RND = new Random(); // a shared random number generator
-    public static class V{
+    public static class V implements Serializable {
       public int x,y;
       public V(int x, int y){this.x = x; this.y = y;}
       public V(){x=0;y=0;}
@@ -189,7 +190,7 @@ public class G{
       public String toString(){return "H:"+ h + " V:" + v;}
     }
     
-    public static class PL{
+    public static class PL implements Serializable {
       public V[] points;
       public PL(int n){points = new V[n]; for(int i=0;i<n;i++){points[i]=new V();}}
     

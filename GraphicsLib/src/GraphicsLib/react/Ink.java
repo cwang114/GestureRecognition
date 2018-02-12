@@ -10,6 +10,7 @@ import GraphicsLib.G.PL;
 import GraphicsLib.G.V;
 import GraphicsLib.G.VS;
 import java.awt.Graphics;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -68,7 +69,7 @@ public class Ink implements I.Show{
     
     public Ink(){norm = new Norm(); vs = new VS(Ink.buffer.box);}
     
-    public static class Norm extends PL{
+    public static class Norm extends PL implements Serializable {
       
       public int nBlend = 1; // the number of norms averaged
       private static final int N = UC.normSize;
@@ -101,7 +102,19 @@ public class Ink implements I.Show{
           nBlend += 1;
       }
       
-      public static class List extends ArrayList<Norm> {
+      public static class List extends ArrayList<Norm> implements Serializable {
+          public void addOrBlend(Norm n) {
+              // choose add or blend based on the distance
+              Norm best = bestMatch(n);
+              
+              if (best == null || best.distNorm(n) > UC.noMatch) {
+                  
+                  // add on another possibility into prototypes
+                  add(n);
+              } else {
+                  best.blend(n);
+              }
+          }
           public void addDiff(Norm n) {
               int bestMatch = UC.noMatch;              
               // Go through all the existing elements in the list.
