@@ -13,55 +13,7 @@ import java.awt.Graphics;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-/**
- *
- * @author Lion's laptop
- 
-*
-public class Ink {
-    public Norm norm;    
-    public BBox box;    
-    // a list of points with a number of UC.sizeOfInkBuffer
-    public static Buffer buffer = new Buffer(); 
-    
-    public static class Buffer extends PL implements I.Show{
-        public BBox box;
-        public int n; // keeps track of the number of active in buffer array list.
-        public Buffer(){
-            super(UC.sizeOfInkBuffer);            
-            box = new BBox(0,0);
-        }
-        public void firstPoint(int x, int y){
-            // reset the BBox
-            box.set(x, y);
-            // set the x and y attribute for the first point in the buffer array list.
-            this.points[0].set(x, y);
-            // set n
-            n = 1; // there is one point in the buffer.
-        }
-        // add an arbitrary point in the middle
-        public void addPoint(int x, int y){
-            if(n < UC.sizeOfInkBuffer-1){
-                // put the point into the buffer
-                this.points[n].set(x, y);
-                // add the vector in the boundary box
-                box.add(this.points[n]);
-                n++;
-            }          
-            
-        }
-        
-        // override the show routine in I.show
-        @Override
-        public void show(Graphics g){
-            this.show(g, n);
-        }
-    }
-    public static class Norm{
-        
-    }
-}
-*/
+
 public class Ink implements I.Show{  
     public Norm norm; 
     public VS vs;
@@ -75,9 +27,26 @@ public class Ink implements I.Show{
       private static final int N = UC.normSize;
       public static V temp = new V(), prev = new V();
       
+      public static Norm DOT = new Norm(true);
       
-      public Norm(){
+      // constructor for DOT.
+
+      private Norm(boolean dot) {
+          super(N);
+      }
+      public static Norm getNorm() {
+        if (Ink.buffer.box.h.s <= UC.dotSize && 
+            Ink.buffer.box.v.s <= UC.dotSize) {
+            return Norm.DOT;
+        } else {
+              return new Norm();
+          }
+          
+      }
+      private Norm(){
         super(N, Ink.buffer, Ink.buffer.n);
+        
+        
         // horizontal size and vertical size
         
         LoHi h = Ink.buffer.box.h, v = Ink.buffer.box.v; // fetch out the two scales
@@ -93,6 +62,10 @@ public class Ink implements I.Show{
       }
       // blend norm into this.
       public void blend (Norm n) {
+          // what if n is a dot? dot cannot blend and cannot be blended.
+          if (this == DOT || n == DOT) {
+              return;
+          }
           for(int i = 0; i < N; i++) {
               // update a point with the averaged value of coordinates.
               int newX = (points[i].x * nBlend + n.points[i].x)/(nBlend+1);
@@ -178,11 +151,19 @@ public class Ink implements I.Show{
       
         // Calculate the distance of two norms.
         public int distNorm(Norm norm) {
-            int res = 0;
-            for(int i = 0; i < N; i++) {
-                res += this.points[i].dist(norm.points[i]);
+            if (this == DOT && norm == DOT) {
+                return 0;
             }
-            return res;
+            if (this == DOT || norm == DOT) {
+                return UC.noMatch;
+            } else {
+                int res = 0;
+                for(int i = 0; i < N; i++) {
+                    res += this.points[i].dist(norm.points[i]);
+                }
+                return res; 
+            }
+            
         }
     }  
      

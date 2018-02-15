@@ -143,7 +143,7 @@ public class ShapeTrainer extends Window{
                 shape = new Shape(currentShape);
             }
             System.out.println(shape.prototypes == null);
-            shape.prototypes.addOrBlend(new Norm());
+            shape.prototypes.addOrBlend(Norm.getNorm());
         } else {
             buttonClicked = false;
         }

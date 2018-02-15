@@ -31,7 +31,7 @@ public class Stroke {
     
     
     public Stroke() {
-        Norm norm = new Norm();
+        Norm norm = Norm.getNorm();
         shape = theShapeDB.find(norm);
         
     }
@@ -40,7 +40,14 @@ public class Stroke {
     public static class Shape implements Serializable {
         public String name;
         public Norm.List prototypes;
-
+        public static Shape shapeDot = new Shape();
+        
+        private Shape() {
+            this.name = "DOT";
+            prototypes = new Norm.List();
+            prototypes.add(Norm.DOT);
+                    
+        }
         public Shape(String name) {
             this.name = name;
             prototypes = new Norm.List();
@@ -68,10 +75,13 @@ public class Stroke {
             public static String FNAME = "ShapeDB.dat";
             
             // find the Shape object by the name.            
-            Map<String, Shape> byName = new HashMap<>();
+            public Map<String, Shape> byName = new HashMap<>();
             
             // find in db which is the nearest neighbor
             public Shape find(Norm norm) {
+                if (norm == Norm.DOT) {
+                    return shapeDot;
+                }
                 int bestNumber = Integer.MAX_VALUE;
                 Shape result = null;
                 // go through every single shape and find the best match.
@@ -101,7 +111,9 @@ public class Stroke {
                   res = (DB) oin.readObject();
                   oin.close();
                   fin.close();
-                }catch(Exception e) {
+                }catch(Exception e) {                  
+                  System.out.println(e);
+                  e.printStackTrace();
                   System.out.println("Couldn't find file "+ FNAME + " so used default values.");
                   res = new DB();
                 }

@@ -24,4 +24,11 @@ public class UC {
     public static final int normSize = 40;
     
     public static final int noMatch = 5000000;
+    
+    /**
+     * Represents initial bid score.
+     */
+    public static final int noBid = 10000;
+    
+    public static final int dotSize = 4;
 }

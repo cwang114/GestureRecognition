@@ -163,6 +163,19 @@ public class G{
       public boolean hit(int x, int y) {
           return (loc.x <= x) && (loc.y <= y) && (x <= (loc.x+size.x)) && (y <= (loc.y+size.y));
       }
+      
+      public int mx() {
+          return loc.x + size.x/2;
+      }
+      public int my() {
+          return loc.y + size.y/2;
+      }
+      public int bx() {
+          return loc.x + size.x;
+      }
+      public int by() {
+          return loc.y + size.y;
+      }
     }
   
     public static class LoHi{ 
