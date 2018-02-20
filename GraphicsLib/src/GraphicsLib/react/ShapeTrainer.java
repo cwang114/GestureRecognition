@@ -24,9 +24,7 @@ import sandbox.Sandbox;
  * @author Lion's laptop
  */
 public class ShapeTrainer extends Window{
-    // public static ArrayList<Ink> inkList = new ArrayList<>();
-    // public static Ink.Norm.List normList = new Ink.Norm.List();
-    // public static Ink.Norm lastNorm;
+    
     // two buttons
     public static final int buttonWidth = 100;
     public static final int buttonHeight = 50;
@@ -37,24 +35,14 @@ public class ShapeTrainer extends Window{
     public static String currentShape = "N-N"; // default shape
     public static boolean selectingShape = false;
     public static Scanner sc=new Scanner(System.in);
-    
-    // public static int numOfString = 100;
-    // public static String[] testStrings = {"N-N", "S-S", "N-E", "N-E", "N-E"};
-    
+   
 /**
      * @param args the command line arguments
      */
 
     public static void main(String[] args) {
        Stroke.theShapeDB = DB.load();
-       PANEL = new ShapeTrainer();
-      
-//      Scanner sc=new Scanner(System.in); 
-//      System.out.println("Please enter the name of the shape.");  
-//      String name=sc.next(); 
-//      System.out.println("output trial: " + name);
-//      sc.close();
-      
+       PANEL = new ShapeTrainer();      
       launch();
     }
     

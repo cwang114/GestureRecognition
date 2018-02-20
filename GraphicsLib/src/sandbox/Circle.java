@@ -7,6 +7,7 @@ package sandbox;
 
 import GraphicsLib.G.V;
 import GraphicsLib.react.I;
+import GraphicsLib.react.Mass;
 import GraphicsLib.react.Reaction;
 import GraphicsLib.react.Stroke;
 import java.awt.Color;
@@ -17,13 +18,16 @@ import java.util.ArrayList;
  *
  * @author Lion's laptop
  */
-public class Circle implements I.Show {
+public class Circle extends Mass {
     public V center;
     public int radius;
-    public static ArrayList<Circle> list = new ArrayList<>();
+    // public static ArrayList<Circle> list = new ArrayList<>();
+    public static Layer CIRCLE = new Layer();
+    public static Layer SQUARE = new Layer();
     public boolean blue = false;
+    public boolean square = false;
     
-    public Reaction createCircle = new Reaction("O") {
+    public static Reaction createCircle = new Reaction("O") {
         @Override
         public int bid(Stroke s) {
             return 100;
@@ -32,77 +36,98 @@ public class Circle implements I.Show {
         @Override
         public void act(Stroke s) {
             // create a new circle with a radius of average of vs x and y.
-            new Circle(s.vs.mx(), s.vs.my(), (s.vs.size.x + s.vs.size.y)/4);
+            new Circle(s.vs.mx(), s.vs.my(), (s.vs.size.x + s.vs.size.y)/4, false);
         }
         
     };
     
-    public Reaction resize = new Reaction("S-S"){
+    
+    public static Reaction createSquare = new Reaction("S-E") {
         @Override
         public int bid(Stroke s) {
-            // use absolute distance to bid.
-            return Math.abs(s.vs.loc.x - center.x);
+            return 100;
         }
 
         @Override
         public void act(Stroke s) {
-            // update radius of the nearest circle.
-            radius = Math.abs(s.vs.loc.x - center.x);
-            // change radius in individual object.
+            // create a new circle with a radius of average of vs x and y.
+            new Circle(s.vs.mx(), s.vs.my(), (s.vs.size.x + s.vs.size.y)/4, true);
         }
         
     };
     
-    public Reaction delete = new Reaction("S-N"){
-        @Override
-        public int bid(Stroke s) {
-            // use absolute distance to bid.
-            int sx = s.vs.mx();
-            int sy = s.vs.loc.y;
-            int distance = Math.abs(sx - center.x)+Math.abs(sy - center.y);
-            return distance;
-        }
-
-        @Override
-        public void act(Stroke s) {
-            Circle.list.remove(Circle.this);
-            // wipe out the reactions related to the circle.
-            // find the list of reactions by byshape.get(shape);
-            delete.removeReaction();
-            resize.removeReaction();
-            changeColor.removeReaction();
-        }
-        
-    };
     
-    public Reaction changeColor = new Reaction("DOT"){
-        @Override
-        public int bid(Stroke s) {
-            // use absolute distance to bid.
-            int sx = s.vs.mx();
-            int sy = s.vs.loc.y;
-            int distance = Math.abs(sx - center.x)+Math.abs(sy - center.y);
-            return distance;
-        }
-
-        @Override
-        public void act(Stroke s) {
-            blue ^= true;
-            
-        }
-        
-    };
-    
-    public Circle(int x, int y, int r) {
+    public Circle(int x, int y, int r, boolean sq) {
+        // put CIRCLE in layer
+        super(sq ? SQUARE : CIRCLE);
         center = new V(x, y);
         radius = r;
-        list.add(this);
+        this.square = sq;
+        
+        // resize reaction added
+        add(new Reaction("S-S"){
+            @Override
+            public int bid(Stroke s) {
+                // use absolute distance to bid.
+                return Math.abs(s.vs.loc.x - center.x);
+            }
+
+            @Override
+            public void act(Stroke s) {
+                // update radius of the nearest circle.
+                radius = Math.abs(s.vs.loc.x - center.x);
+                // change radius in individual object.
+            }
+
+        });
+        
+        // delete raction added
+        add(new Reaction("S-N"){
+            @Override
+            public int bid(Stroke s) {
+                // use absolute distance to bid.
+                int sx = s.vs.mx();
+                int sy = s.vs.loc.y;
+                int distance = Math.abs(sx - center.x)+Math.abs(sy - center.y);
+                return distance;
+            }
+
+            @Override
+            public void act(Stroke s) {
+                // this refers to a Reaction for the circle.
+                Circle.this.removeFromLayers();
+            }
+
+        });
+        
+        // changeColor reaction added
+        add(new Reaction("DOT"){
+            @Override
+            public int bid(Stroke s) {
+                // use absolute distance to bid.
+                int sx = s.vs.mx();
+                int sy = s.vs.loc.y;
+                int distance = Math.abs(sx - center.x)+Math.abs(sy - center.y);
+                return distance;
+            }
+
+            @Override
+            public void act(Stroke s) {
+                blue ^= true;            
+            }
+
+        });
     }
 
     @Override
     public void show(Graphics g) {
-        g.setColor(blue ? Color.blue : Color.red);
-        g.fillOval(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
+        g.setColor(blue ? Color.BLUE : Color.RED);
+        if (square) {
+            g.fillRect(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
+        } else {
+            g.fillOval(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
+        }
+        
     }
     
     

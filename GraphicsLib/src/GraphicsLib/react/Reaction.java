@@ -21,6 +21,9 @@ public abstract class Reaction implements I.React {
 
     public static Map<Shape, List> byShape = new HashMap<>();
     public String shapeName;
+    // a list of reactions that blank screen can do.
+    // only for the undo procedure.
+    public static Reaction.List initialReactions = new Reaction.List();
     
     public Reaction(String shapeName) {
         this.shapeName = shapeName;
@@ -44,6 +47,12 @@ public abstract class Reaction implements I.React {
         list.remove(this);
     }  
     
+    public static void removeList(Mass mass) {
+        for (Reaction r : mass) {
+            r.removeReaction();
+        }
+    }
+    
     public static Reaction bestReaction(Stroke s) {
         System.out.print("bestReaction(): " + s.shape);
         List list = byShape.get(s.shape);
@@ -54,6 +63,8 @@ public abstract class Reaction implements I.React {
         }
         return null;
     }
+    
+    
             
     @Override
     public abstract int bid(Stroke s);
