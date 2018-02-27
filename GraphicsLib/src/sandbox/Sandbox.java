@@ -74,9 +74,12 @@ public class Sandbox extends Window{
     public void mouseReleased(MouseEvent e){
 
         Stroke s = new Stroke();
-        Reaction r = Reaction.bestReaction(s);
-        if (r != null) {
-            r.act(s);
+//        Reaction r = Reaction.bestReaction(s);
+//        if (r != null) {
+//            r.act(s);
+//        }
+        if (s.doit()) {
+            Ink.buffer.n = 0;
         }
         System.out.println("The name of current stroke is: " + s.shape.name);
         PANEL.repaint();
