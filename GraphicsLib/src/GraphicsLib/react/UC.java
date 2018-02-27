@@ -31,4 +31,6 @@ public class UC {
     public static final int noBid = 10000;
     
     public static final int dotSize = 4;
+    
+    public static final int defaultStaffLineCount = 5;
 }
