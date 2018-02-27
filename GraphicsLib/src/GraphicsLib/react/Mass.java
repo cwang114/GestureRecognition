@@ -48,7 +48,7 @@ public abstract class Mass extends Reaction.List implements I.Show {
             }
         }
         
-        public static void clearAll(Graphics g) {
+        public static void clearAll() {
             for (Layer l : all) {
                 l.clear();
             }

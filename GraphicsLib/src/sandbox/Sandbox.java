@@ -78,6 +78,7 @@ public class Sandbox extends Window{
         if (r != null) {
             r.act(s);
         }
+        System.out.println("The name of current stroke is: " + s.shape.name);
         PANEL.repaint();
       
     }

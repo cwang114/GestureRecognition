@@ -7,6 +7,7 @@ package GraphicsLib.react;
 
 import GraphicsLib.G.VS;
 import GraphicsLib.react.Ink.Norm;
+import GraphicsLib.react.Mass.Layer;
 import GraphicsLib.react.Stroke.Shape.DB;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -29,12 +30,51 @@ public class Stroke {
     public Shape shape;
     public VS vs = new VS(Ink.buffer.box); // convert the BBox in ink buffer into VS
     
-    
     public Stroke() {
         Norm norm = Norm.getNorm();
         shape = theShapeDB.find(norm);
         
     }
+    public boolean doit() {
+        // see if ta Stroke.shape is undo. If so, remove it.
+        return Undo.list.process(this);
+    }
+    
+    boolean redo() {
+        // if a single stroke is not undo, redo it!
+        Reaction r = Reaction.bestReaction(this);
+        if (r != null) {
+            r.act(this);
+        }
+        return r != null;
+    }
+    
+    public static class Undo extends ArrayList<Stroke> {
+        public static Shape UNDO = theShapeDB.byName.get("N-N"); // ?the db name?
+        public static Undo list = new Undo();
+         
+        boolean process (Stroke s) {
+            if (s.shape != UNDO) {
+                if (s.redo()) {
+                    list.add(s);
+                    return true;
+                }
+                return false;
+            }
+            if (list.size() > 0) {
+                list.remove(list.size() - 1);
+                Layer.clearAll();
+                Reaction.clearAll();
+                Reaction.addList(Reaction.initialReactions);
+                for(Stroke k : list) {
+                    k.redo();
+                }
+            }
+            return true;
+        }
+    }
+    
+
     
     
     public static class Shape implements Serializable {

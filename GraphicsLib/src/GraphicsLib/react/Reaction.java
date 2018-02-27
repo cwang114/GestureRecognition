@@ -41,15 +41,37 @@ public abstract class Reaction implements I.React {
         list.add(this);
     }
             
+    public static void add(Reaction r) {
+        Shape s = Stroke.theShapeDB.byName.get(r.shapeName);
+        List list = byShape.get(s);
+        if (list == null) {
+            list = new List();
+            byShape.put(s, list);
+        }
+        list.add(r);
+    }
+    
     public void removeReaction() {
         Shape s = Stroke.theShapeDB.byName.get(shapeName);
         List list = byShape.get(s);
-        list.remove(this);
+        if (list != null) {
+            list.remove(this);
+        }
     }  
     
     public static void removeList(Mass mass) {
         for (Reaction r : mass) {
             r.removeReaction();
+        }
+    }
+    
+    public static void clearAll() {
+        byShape.clear();
+    }
+    
+    public static void addList(Reaction.List rl) {
+        for (Reaction r : rl) {
+            add(r);
         }
     }
     

@@ -10,6 +10,7 @@ import GraphicsLib.react.I;
 import GraphicsLib.react.Mass;
 import GraphicsLib.react.Reaction;
 import GraphicsLib.react.Stroke;
+import GraphicsLib.react.UC;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -89,7 +90,13 @@ public class Circle extends Mass {
                 int sx = s.vs.mx();
                 int sy = s.vs.loc.y;
                 int distance = Math.abs(sx - center.x)+Math.abs(sy - center.y);
-                return distance;
+                if (distance < 20) {
+                    return distance;
+                } else {
+                    // should not do this reaction.
+                    return UC.noBid;
+                }
+
             }
 
             @Override
