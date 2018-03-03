@@ -157,6 +157,7 @@ public class Stroke {
                   System.out.println("Couldn't find file "+ FNAME + " so used default values.");
                   res = new DB();
                 }
+                System.out.println("Recognize shapes " + res.byName.keySet());
                 return res;
               }
 

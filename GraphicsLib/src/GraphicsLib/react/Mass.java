@@ -27,6 +27,11 @@ public abstract class Mass extends Reaction.List implements I.Show {
         // remove the reaction list 
         Reaction.removeList(this);
     }
+    
+    public void addToLayers() {
+        layer.add(this);
+        Reaction.addList(this);
+    }
 
     @Override
     public abstract void show(Graphics g);

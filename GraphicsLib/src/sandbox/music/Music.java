@@ -31,14 +31,18 @@ import sandbox.Circle;
 
 public class Music extends Window {
     public static Layer BACK = new Layer();
+    public static Layer sysDef = new Layer();
     public static Reaction initialStaff;
+    
+    
 /**
      * @param args the command line arguments
      */
 
     public static void main(String[] args) {
       PANEL = new Music();
-      initialStaff = Staff.createStaff;
+      Reaction r = Sys.systemDefBack;
+      // initialStaff = Staff.createStaff;
       launch();
     }
     

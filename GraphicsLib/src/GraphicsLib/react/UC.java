@@ -33,4 +33,6 @@ public class UC {
     public static final int dotSize = 4;
     
     public static final int defaultStaffLineCount = 5;
+    
+    public static final int timeThreshold = 50;
 }
