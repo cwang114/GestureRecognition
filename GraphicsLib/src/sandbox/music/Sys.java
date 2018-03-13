@@ -17,8 +17,8 @@ import java.awt.Graphics;
  * @author Lion's laptop
  */
 public class Sys {
-    Staff.List staffs = new Staff.List();
-    Time.List times = new Time.List();
+    public Staff.List staffs = new Staff.List();
+    public Time.List times = new Time.List();
     public static Sys.Def systemDef = new Def();
     public static Reaction systemDefBack = new Reaction("E-W") {
         public int bid(Stroke s) {
@@ -47,13 +47,27 @@ public class Sys {
             return;
         }
         int biasFromTop = systemDef.yStaff.get(0);
+        int index = 0;
         for (Integer sy: systemDef.yStaff) {
             // System.out.println("The y coord is " + (sy+y));
-            new Staff(sy+y-biasFromTop);
+            staffs.add(new Staff(sy+y-biasFromTop, this, index));
+            index ++;
+            
             
         }
     }
+
+    public int getDy() {
+        return staffs.get(0).dy;
+    }
     
+    public int getY() {
+        return staffs.get(0).y;
+    }
+    
+    public int getYBot() {
+        return staffs.get(staffs.size() - 1).yBot();
+    }
     
     public static class Def extends Mass {
         // list of y coords for each staff

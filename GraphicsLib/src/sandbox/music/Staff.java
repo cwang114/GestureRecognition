@@ -20,11 +20,16 @@ import java.util.ArrayList;
  */
 public class Staff extends Mass {
     private int nLines = UC.defaultStaffLineCount;
-    private int dy = 10;    // half spacing between those lines.
+    public int dy = 10;    // half spacing between those lines.
     private static int leftMargin = 100;
     private static int rightMargin = 900;
     
-    private int y;
+    public int y;
+    private Sys sys;
+    
+    private boolean measureContinues = false;
+    private int index;
+   
     
     
 //    public static Reaction createStaff = new Reaction("E-E") {
@@ -43,10 +48,30 @@ public class Staff extends Mass {
     
     
     
-    public Staff(int y) {
+    public Staff(int y, Sys sys, int index) {
         super(Music.BACK);
         this.y = y; 
-        // System.out.println("Staff= " + y);
+        this.sys = sys;
+        this.index = index;
+        
+        add(new Reaction("S-S") {
+           public int bid(Stroke s) {
+               // how close the stroke to top and bottom line 
+               int y1 = s.vs.loc.y;
+               int y2 = s.vs.by();
+               if (Math.abs(y1 - y) > 20) {
+                   return UC.noBid;
+               }
+               if (Math.abs(y2 - yBot()) > 20) {
+                   return UC.noBid;
+               }
+               return Math.abs(y1 - y) + Math.abs(y2 - yBot()) + 100;
+           } 
+           public void act(Stroke s) {
+               new Measure(sys, s.vs.mx());
+           }
+        });
+        
     }
 
     @Override
@@ -60,6 +85,10 @@ public class Staff extends Mass {
         for (int i = 0; i < nLines; i++) {
             g.drawLine(leftMargin, y + 2 * i * dy, rightMargin, y + 2 * i * dy);    
         }
+    }
+    
+    public int yBot() {
+        return y + 2*(nLines-1)*dy;
     }
     
     public static class List extends ArrayList<Staff> {
