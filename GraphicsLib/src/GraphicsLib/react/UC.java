@@ -35,4 +35,6 @@ public class UC {
     public static final int defaultStaffLineCount = 5;
     
     public static final int timeThreshold = 50;
+    
+    public static int dotRadius = 3;
 }

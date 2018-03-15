@@ -72,6 +72,27 @@ public class Staff extends Mass {
            }
         });
         
+        add(new Reaction("SW-SW") {
+           public int bid(Stroke s) {
+               int yStroke = s.vs.my();
+               int yTop = y;
+               int yBot = yBot();
+               if (yStroke < yTop-2*dy) {
+                   return UC.noBid;
+               }
+               if (yStroke > yBot+2*dy) {
+                   return UC.noBid;
+               }
+               if (s.vs.mx() < leftMargin || s.vs.mx() > rightMargin) {
+                   return UC.noBid;
+               }
+               return 100;
+           }   
+           public void act(Stroke s) {
+               new Note(Staff.this, s.vs.mx(), s.vs.my());
+           }
+        });
+        
     }
 
     @Override

@@ -31,6 +31,7 @@ import sandbox.Circle;
 
 public class Music extends Window {
     public static Layer BACK = new Layer();
+    public static Layer NOTELAYER = new Layer();
     public static Layer sysDef = new Layer();
     public static Reaction initialStaff;
     
