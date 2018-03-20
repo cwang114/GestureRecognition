@@ -9,12 +9,13 @@ import GraphicsLib.react.UC;
 import java.util.ArrayList;
 
 /**
- *
+ * Represents the vertical alignment on the staff for notes.
  * @author Lion's laptop
  */
 public class Time {
     
     public int x;
+    public ArrayList<Note> notes = new ArrayList<>();
 
     public Time(int x) {
         this.x = x;
@@ -26,7 +27,9 @@ public class Time {
             Time result = null;
             int bestDistance;
             if (this.size() == 0) {
-               return new Time(x);
+                Time t = new Time(x);
+                this.add(t);
+                return t;
             } else {
                 result = this.get(0);
                 bestDistance = Math.abs(x - result.x);
@@ -40,9 +43,16 @@ public class Time {
                 }
             }
             // see if the bestDistance is good enough.
-            return (bestDistance < UC.timeThreshold) ? result : new Time(x);
+            if (bestDistance < UC.timeThreshold) {
+                return result;
+            } else {
+                Time t = new Time(x);
+                this.add(t);
+                return t;
+            }
             
         }
-    }
+    } 
+    
 
 }

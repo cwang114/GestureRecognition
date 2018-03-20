@@ -25,7 +25,7 @@ public class Staff extends Mass {
     private static int rightMargin = 900;
     
     public int y;
-    private Sys sys;
+    public Sys sys;
     
     private boolean measureContinues = false;
     private int index;
